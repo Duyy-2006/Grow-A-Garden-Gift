@@ -32,7 +32,7 @@ while true do
         end
     end
 
-    -- 2) If below threshold, write file
+    print(matchCount)
     if matchCount < 1 then
         if writefile then
             writefile(filename, 'Yummytool')
