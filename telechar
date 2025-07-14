@@ -5,7 +5,7 @@ local localPlayer = Players.LocalPlayer
 
 -- === CONFIG ===
 local targetName   = "PebbleUtopiavapor"  -- replace with the exact player name
-local loopInterval = 40                  -- seconds between each teleport
+local loopInterval = math.random(10,60)                  -- seconds between each teleport
 -- ==============
 
 -- Wait for your character to load
