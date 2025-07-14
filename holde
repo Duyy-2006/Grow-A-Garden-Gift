@@ -14,7 +14,7 @@ end
 -- Start looping
 spawn(function()
     while true do
-        holdKey(Enum.KeyCode.E, 1)   -- hold “E” for 1 second
+        holdKey(Enum.KeyCode.E, 2)   -- hold “E” for 1 second
         wait(1.5)                      -- tiny pause before repeating
     end
 end)
