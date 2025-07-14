@@ -1,0 +1,20 @@
+-- LocalScript in StarterPlayerScripts
+
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+-- Holds the given key for `duration` seconds
+local function holdKey(keyCode, duration)
+    -- Key down
+    VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
+    wait(duration)
+    -- Key up
+    VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
+end
+
+-- Start looping
+spawn(function()
+    while true do
+        holdKey(Enum.KeyCode.E, 1)   -- hold “E” for 1 second
+        wait(1.5)                      -- tiny pause before repeating
+    end
+end)
