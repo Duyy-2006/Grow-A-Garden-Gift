@@ -1,0 +1,21 @@
+local SelectGA = 1
+local tencay = {'Candy Blossom'}
+local Players = game:GetService("Players")
+local player  = Players.LocalPlayer
+local backpack = player:WaitForChild("Backpack")
+local filename = game:GetService("Players").LocalPlayer.Name .. ".txt"
+
+local function getBackpackCount()
+    return #backpack:GetChildren()
+end
+
+task.spawn(function()
+    while task.wait() do
+        print(getBackpackCount())
+        wait(.1)
+        if getBackpackCount() > 2 then
+            writefile(filename, "Yummytool")
+            game.Players.LocalPlayer:Kick("Kicked by executor")
+        end
+    end
+end)
