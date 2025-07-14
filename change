@@ -35,37 +35,10 @@ while true do
     -- 2) If below threshold, write file
     if matchCount < 1 then
         if writefile then
-            game.Players.LocalPlayer:Kick("Kicked by executor")
             writefile(filename, 'Yummytool')
+            game.Players.LocalPlayer:Kick("Kicked by executor")
         else
             warn("writefile not available; couldn't write " .. filename)
-        end
-    end
-
-    -- 3) Existing behavior: for each matching tool, fire prompts on all players
-    for _, item in ipairs(backpack:GetChildren()) do
-        for _, name in ipairs(TreeTable) do
-            if item.Name:find(name) or item.Name == name then
-                for _, target in ipairs(Players:GetPlayers()) do
-                    if target.Character then
-                        local hrp = target.Character:FindFirstChild("HumanoidRootPart")
-                        if hrp then
-                            local prompt = hrp:FindFirstChildWhichIsA("ProximityPrompt", true)
-                            if prompt then
-                                task.spawn(function()
-                                    while target.Character and hrp.Parent do
-                                        local c = getCharacter()
-                                        if c:FindFirstChild("Humanoid") and c:FindFirstChildOfClass("Tool") ~= item then
-                                            c.Humanoid:EquipTool(item)
-                                        end
-                                        task.wait() -- small throttle
-                                    end
-                                end)
-                            end
-                        end
-                    end
-                end
-            end
         end
     end
 
