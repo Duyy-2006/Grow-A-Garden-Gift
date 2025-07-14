@@ -1,67 +1,51 @@
--- Configuration
-local TreeTable = {
-    "Grey Mouse", "Brown Mouse", "Squirrel", "Red Giant Ant", "Red Fox",
-    "Caterpillar", "Snail", "Giant Ant", "Praying Mantis", "Dragonfly",
-    "Ostrich", "Peacock", "Capybara", "Scarlet Macaw", "Mimic Octopus",
-    "Raptor", "Triceratops", "Stegosaurus", "Pterodactyl", "Brontosaurus", "T-Rex"
-}
-local filename = game:GetService('Players').LocalPlayer.Name .. '.txt'
-
--- Services
-local Players     = game:GetService("Players")
+local TreeTable = {"Grey Mouse", "Brown Mouse", "Squirrel","Red Giant Ant","Red Fox","Caterpillar","Snail","Giant Ant","Praying Mantis","Dragonfly","Ostrich","Peacock","Capybara","Scarlet Macaw","Mimic Octopus","Raptor","Triceratops","Stegosaurus","Pterodactyl","Brontosaurus","T-Rex"}
+local Players = game:GetService('Players')
 local LocalPlayer = Players.LocalPlayer
 
--- Helper to wait for your character
+-- wait for character to load
 local function getCharacter()
     return LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 end
 
--- Main loop
+-- main loop: repeat every 1 second
 while true do
-    local char = getCharacter()
-    local backpack = LocalPlayer.Backpack
-
-    -- 1) Count how many tools in backpack match any name in TreeTable
-    local matchCount = 0
-    for _, item in ipairs(backpack:GetChildren()) do
-        for _, name in ipairs(TreeTable) do
-            if item.Name:find(name) or item.Name == name then
-                matchCount = matchCount + 1
-                break
-            end
-        end
-    end
-
-    -- 2) If below threshold, write file
-    if matchCount < 1 then
-        if writefile then
-            game.Players.LocalPlayer:Kick("Kicked by executor")
-            writefile(filename, 'Yummytool')
-        else
-            warn("writefile not available; couldn't write " .. filename)
-        end
-    end
-
-    -- 3) Existing behavior: for each matching tool, fire prompts on all players
-    for _, item in ipairs(backpack:GetChildren()) do
-        for _, name in ipairs(TreeTable) do
-            if item.Name:find(name) or item.Name == name then
-                for _, target in ipairs(Players:GetPlayers()) do
-                    if target.Character then
-                        local hrp = target.Character:FindFirstChild("HumanoidRootPart")
-                        if hrp then
-                            local prompt = hrp:FindFirstChildWhichIsA("ProximityPrompt", true)
-                            if prompt then
-                                task.spawn(function()
-                                    while target.Character and hrp.Parent do
-                                        local c = getCharacter()
-                                        if c:FindFirstChild("Humanoid") and c:FindFirstChildOfClass("Tool") ~= item then
-                                            c.Humanoid:EquipTool(item)
-                                        end
-                                        task.wait() -- small throttle
+    -- for each tool in backpack
+    for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
+        for _, TreeName in ipairs(TreeTable) do
+            if item.Name:find(TreeName) or item.Name == TreeName then
+                -- loop through every player
+                for _, TargetPlayer in ipairs(Players:GetPlayers()) do
+                    if
+                        TargetPlayer.Character
+                        and TargetPlayer.Character:FindFirstChild(
+                            'HumanoidRootPart'
+                        )
+                    then
+                        local prompt =
+                            TargetPlayer.Character.HumanoidRootPart:FindFirstChildWhichIsA(
+                                'ProximityPrompt',
+                                true
+                            )
+                        if prompt then
+                            pcall(function()
+                                -- keep equipping until the prompt is gone
+                                repeat
+                                    local char = getCharacter()
+                                    if
+                                        char:FindFirstChild('Humanoid')
+                                        and char:FindFirstChildOfClass(
+                                                'Tool'
+                                            )
+                                            ~= item
+                                    then
+                                        char.Humanoid:EquipTool(item)
                                     end
-                                end)
-                            end
+                                    task.wait() -- small throttle
+                                until not TargetPlayer.Character
+                                    or not TargetPlayer.Character:FindFirstChild(
+                                        'HumanoidRootPart'
+                                    )
+                            end)
                         end
                     end
                 end
@@ -69,5 +53,5 @@ while true do
         end
     end
 
-    task.wait(10)
+    task.wait(1) -- wait 1 second before repeating
 end
