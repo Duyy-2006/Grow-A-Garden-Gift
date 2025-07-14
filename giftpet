@@ -1,6 +1,6 @@
 getgenv().Config = {
     ["Pet"] = {"Grey Mouse", "Brown Mouse", "Squirrel","Red Giant Ant","Red Fox","Caterpillar","Snail","Giant Ant","Praying Mantis","Dragonfly","Ostrich","Peacock","Capybara","Scarlet Macaw","Mimic Octopus","Raptor","Triceratops","Stegosaurus","Pterodactyl","Brontosaurus","T-Rex"},
-    ["Account Main"] = {"PebbleUtopiavapor"}
+    ["Account Main"] = {"PebbleUtopiavapor"},
     ["JobId"] = "bfeae903-e2f6-4643-8c3c-3b5aae482c62"
 }
 loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/b031cd1812f4776bbd8bc2f8cff2f302.lua"))()
