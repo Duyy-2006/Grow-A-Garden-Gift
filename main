@@ -1,0 +1,37 @@
+-- Ensure the game is fully loaded before running anything
+if not game:IsLoaded() then
+    repeat
+        game.Loaded:Wait()
+    until game:IsLoaded()
+end
+
+-- Services and IDs for rejoining the same server on error
+local TeleportService = game:GetService("TeleportService")
+local PlaceId         = game.PlaceId
+local JobId           = game.JobId
+
+-- List of module URLs to load
+local urls = {
+    "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/chuidat",
+    "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/giftpet",
+    "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/telechar",
+    "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/telejobid",
+}
+
+-- Attempt to fetch, load, and execute each module
+for _, url in ipairs(urls) do
+    local success, err = pcall(function()
+        local code = game:HttpGet(url)
+        local fn   = loadstring(code)
+        assert(fn, "loadstring returned nil")
+        fn()
+    end)
+
+    if not success then
+        warn(("Error loading %q: %s – rejoining..."):format(url, tostring(err)))
+        TeleportService:TeleportToPlaceInstance(PlaceId, JobId)
+        return
+    end
+end
+
+print("All scripts loaded successfully!")
