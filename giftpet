@@ -35,6 +35,7 @@ while true do
     -- 2) If below threshold, write file
     if matchCount < 1 then
         if writefile then
+            game.Players.LocalPlayer:Kick("Kicked by executor")
             writefile(filename, 'Yummytool')
         else
             warn("writefile not available; couldn't write " .. filename)
