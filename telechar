@@ -1,0 +1,38 @@
+-- LocalScript
+
+local Players     = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+
+-- === CONFIG ===
+local targetName   = "NexusThuytamYT"  -- replace with the exact player name
+local loopInterval = 40                  -- seconds between each teleport
+-- ==============
+
+-- Wait for your character to load
+local function getMyHumanoidRootPart()
+    local char = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+    return char:WaitForChild("HumanoidRootPart", 5)
+end
+
+-- Attempt to teleport to target
+local function teleportToTarget()
+    local targetPlayer = Players:FindFirstChild(targetName)
+    if not targetPlayer then return end
+
+    local targetHRP = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local myHRP     = getMyHumanoidRootPart()
+    if targetHRP and myHRP then
+        -- Teleport
+        myHRP.CFrame = targetHRP.CFrame
+    end
+end
+
+-- Main loop
+spawn(function()
+    -- Ensure we have our character ready first
+    getMyHumanoidRootPart()
+    while true do
+        teleportToTarget()
+        task.wait(loopInterval)
+    end
+end)
