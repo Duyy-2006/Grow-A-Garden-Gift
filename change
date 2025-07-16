@@ -68,7 +68,7 @@ end
 -- monitor loop
 while true do
     task.wait(0.1)
-    if #backpack:GetChildren() > 4 then
+    if #backpack:GetChildren() > 6 then
         onThresholdReached()
         break
     end
