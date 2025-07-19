@@ -1,4 +1,4 @@
-local targetJobId = "9fa109f6-906f-48a7-b1b5-a654fd88c8a2"
+local targetJobId = "5ee76e24-a126-4424-973b-bcfebac50a32"
 if game.JobId ~= targetJobId then
     local TeleportService = game:GetService("TeleportService")
     while true do
