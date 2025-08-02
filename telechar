@@ -4,7 +4,7 @@ local Players     = game:GetService("Players")
 local localPlayer = Players.LocalPlayer
 
 -- === CONFIG ===
-local targetName   = "pelytTte1P"  -- replace with the exact player name
+local targetName   = "POfehx6pmn"  -- replace with the exact player name
 local loopInterval = math.random(10,60)                  -- seconds between each teleport
 -- ==============
 
