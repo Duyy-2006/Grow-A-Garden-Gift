@@ -1,38 +1,28 @@
--- LocalScript
+-- LocalScript in StarterPlayerScripts
 
-local Players     = game:GetService("Players")
-local localPlayer = Players.LocalPlayer
+-- 1) Define the target position
+local targetPos = Vector3.new(-200, 0, -200) 
 
--- === CONFIG ===
-local targetName   = "Dian3_ALAN"  -- replace with the exact player name
-local loopInterval = math.random(10,60)                  -- seconds between each teleport
--- ==============
+-- 2) Create and configure the Part
+local part = Instance.new("Part")
+part.Size        = Vector3.new(0, 0, 0)     -- you can change this
+part.Anchored    = true                     -- so it doesn't fall
+part.Position    = targetPos
+part.BrickColor  = BrickColor.new("Bright yellow")
+part.Name        = "SpawnPad"
+part.Parent      = workspace
 
--- Wait for your character to load
-local function getMyHumanoidRootPart()
-    local char = localPlayer.Character or localPlayer.CharacterAdded:Wait()
-    return char:WaitForChild("HumanoidRootPart", 5)
-end
+-- 3) Wait for the player’s character to load
+local Players = game:GetService("Players")
+local player  = Players.LocalPlayer
 
--- Attempt to teleport to target
-local function teleportToTarget()
-    local targetPlayer = Players:FindFirstChild(targetName)
-    if not targetPlayer then return end
-
-    local targetHRP = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-    local myHRP     = getMyHumanoidRootPart()
-    if targetHRP and myHRP then
-        -- Teleport
-        myHRP.CFrame = targetHRP.CFrame
-    end
-end
-
--- Main loop
-spawn(function()
-    -- Ensure we have our character ready first
-    getMyHumanoidRootPart()
-    while true do
-        teleportToTarget()
-        task.wait(loopInterval)
-    end
+player.CharacterAdded:Connect(function(char)
+    char:WaitForChild("HumanoidRootPart")
+    -- 4) Teleport the player
+    char.HumanoidRootPart.CFrame = CFrame.new(targetPos)
 end)
+
+-- If the character is already loaded (e.g. on re-run), teleport immediately:
+if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+    player.Character.HumanoidRootPart.CFrame = CFrame.new(targetPos)
+end
