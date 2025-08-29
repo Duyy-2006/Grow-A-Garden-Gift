@@ -27,6 +27,7 @@ while true do
 
     if matchCount < 1 then
 		writefile(filename, 'Yummytool')
+        wait(60)
         player:Kick('du pet r be iu di ra th')
 	end
 
