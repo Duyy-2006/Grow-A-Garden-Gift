@@ -20,22 +20,6 @@ else if type == "Gift" then
     }
 
 for _, url in ipairs(urls) do
-    local ok, chunkOrErr = pcall(game.HttpGet, game, url)
-    if not ok then
-        warn(("Failed to download %q: %s – rejoining..."):format(url, chunkOrErr))
-        TeleportService:TeleportToPlaceInstance(PlaceId, JobId)
-        return
-    end
-
-    local fn, loadErr = loadstring(chunkOrErr)
-    if not fn then
-        warn(("Error compiling %q: %s – rejoining..."):format(url, loadErr))
-        TeleportService:TeleportToPlaceInstance(PlaceId, JobId)
-        return
-    end
-
-    -- Run each module in its own thread so a blocking loop inside one
-    -- won't stop the others from loading.
     task.spawn(function()
         local success, runErr = pcall(fn)
         if not success then
