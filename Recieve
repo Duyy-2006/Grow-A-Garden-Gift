@@ -5,8 +5,8 @@ getgenv().Config = {
 end
 PetsToTrade = getgenv().PetsToTrade
 if not PetsToTrade then
-   PetsToTrade = { 
- "Mouse", "Bot", "Lab",
+   PetsToTrade = { -- Danh Sách Pet Cần Giao Dịch
+ "Junkbot", "Raptor","Bee",
 }
 end
 
@@ -59,7 +59,12 @@ function TAFSERVICE.c1(pet)
 	local Backpack = LocalPlayer.Backpack
 	local PetTool = Backpack:FindFirstChild(tostring(pet))
     if Humanoid and PetTool then
-		PetTool:SetAttribute("d", false)
+	if PetTool:GetAttribute('d') == true then	
+		local args = {
+	PetTool
+}
+game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Favorite_Item"):FireServer(unpack(args))
+	end
         Humanoid:EquipTool(PetTool)
         wait(0.1)
 		return true
