@@ -5,16 +5,16 @@ if not game:IsLoaded() then
     until game:IsLoaded()
 end
 
--- Services and IDs for rejoining the same server on error
+local type = "Gift"
 local TeleportService = game:GetService("TeleportService")
 local PlaceId         = game.PlaceId
 local JobId           = game.JobId
-
+local urls
 -- List of module URLs to load
-local urls = {
-    "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/telechar",
-    "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/change",
-}
+if type == "Recieve" then
+    urls = {"https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/telechar", "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/change",}
+else if type == "Gift" then
+    urls = {"https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/change_recieve","https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/Recieve"}
 
 for _, url in ipairs(urls) do
     local ok, chunkOrErr = pcall(game.HttpGet, game, url)
