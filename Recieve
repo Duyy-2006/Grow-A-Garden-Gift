@@ -1,0 +1,115 @@
+if not getgenv().Config then
+getgenv().Config = {
+    SelectUserNameTradePet = "CUoAY6FWwe", -- Tên Người Dùng Cần Giao Dịch Pet
+}
+end
+PetsToTrade = getgenv().PetsToTrade
+if not PetsToTrade then
+   PetsToTrade = { 
+ "Mouse", "Bot", "Lab",
+}
+end
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local TAFSERVICE = {}
+
+function TAFSERVICE.a()
+    local UserName = getgenv().Config.SelectUserNameTradePet
+    if UserName == "" then
+        return false
+    end
+    local TargetPlayer = Players:FindFirstChild(UserName)
+    if not TargetPlayer then
+        return false
+    end
+    return true
+end
+
+function TAFSERVICE.b()
+    local Backpack = LocalPlayer.Backpack
+    for _, PetName in ipairs(PetsToTrade) do
+        for i,v in pairs(Backpack:GetChildren()) do
+            if v:IsA("Tool") and v.Name:find(PetName) then
+                return v
+            end
+        end
+    end
+    return false
+end
+
+function TAFSERVICE.c(pos)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
+end
+
+function TAFSERVICE.c1(pet)
+    if not (LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")) then
+        return false
+    end
+    local Humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if not Humanoid then
+        return false
+    end
+    local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
+    if tool and not tool.Name:find(tostring(pet)) then
+        Humanoid:UnequipTools()
+        wait(0.1)
+    end
+	local Backpack = LocalPlayer.Backpack
+	local PetTool = Backpack:FindFirstChild(tostring(pet))
+    if Humanoid and PetTool then
+		PetTool:SetAttribute("d", false)
+        Humanoid:EquipTool(PetTool)
+        wait(0.1)
+		return true
+    end
+end
+
+function TAFSERVICE.d()
+    local Pet,UserTrade = TAFSERVICE.b(),TAFSERVICE.a()
+    if not (UserTrade and Pet) then
+        return "Please set a username and have a pet to trade"
+    end
+    local Status = TAFSERVICE.c1(Pet.Name)
+    if not Status then
+        return "Could not equip pet"
+    end
+    local TargetPlayer = Players:FindFirstChild(getgenv().Config.SelectUserNameTradePet)
+    if not TargetPlayer then
+        return "Can't find player"
+    end
+    if TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        TAFSERVICE.c(TargetPlayer.Character.HumanoidRootPart.Position)
+        wait(0.3)
+        if TargetPlayer.Character.HumanoidRootPart:FindFirstChildOfClass("ProximityPrompt") 
+            and (LocalPlayer.Character.HumanoidRootPart.Position - TargetPlayer.Character.HumanoidRootPart.Position).Magnitude < 10 then
+            pcall(function()
+            fireproximityprompt(TargetPlayer.Character.HumanoidRootPart:FindFirstChildOfClass("ProximityPrompt"))
+            wait(0.3)
+            fireproximityprompt(TargetPlayer.Character.Head:FindFirstChildOfClass("ProximityPrompt"))
+            end)
+			return true
+		else
+            return "No proximity prompt found in target player"
+        end
+    else
+        return "Target player does not have a character"
+    end
+end
+
+function TAFSERVICE.RunService()
+    while true do
+        local status = TAFSERVICE.d()
+        if status then
+            print(status)
+        end
+		if status ~= false and status ~= true then
+            warn("Error: " .. status .. " - Stop service loop")
+			break -- có lỗi
+		end
+        wait(1)
+    end
+end
+
+TAFSERVICE.RunService()
