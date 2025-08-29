@@ -1,0 +1,59 @@
+-- LocalScript in StarterPlayerScripts
+print("OKAY")
+local TreeTable = {
+    'Mouse',
+    'Squirrel',
+    'Red Giant Ant',
+    'Red Fox',
+    'Caterpillar',
+    'Snail',
+    'Giant Ant',
+    'Praying Mantis',
+    'Dragonfly',
+    'Ostrich',
+    'Peacock',
+    'Capybara',
+    'Scarlet Macaw',
+    'Mimic Octopus',
+    'Raptor',
+    'Triceratops',
+    'Stegosaurus',
+    'Pterodactyl',
+    'Brontosaurus',
+    'T-Rex',
+    'Raccoon',
+    'Dragonfly',
+    'Kitsune',
+    'Kodama',
+    'Raiju',
+}
+
+local Players     = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local player = Players.LocalPlayer
+local filename = player.Name .. '.txt'
+-- wait until Backpack is available
+repeat task.wait() until LocalPlayer and LocalPlayer:FindFirstChild("Backpack")
+
+while true do
+    local matchCount = 0
+
+    -- for each tool in the Backpack...
+    for _, tool in ipairs(LocalPlayer.Backpack:GetChildren()) do
+        -- check every name in TreeTable
+        for _, treeName in ipairs(TreeTable) do
+            if tool.Name:find(treeName) then
+                matchCount = matchCount + 1
+                break    -- stop checking this tool once matched
+            end
+        end
+    end
+
+    if matchCount < 1 then
+		writefile(filename, 'Yummytool')
+        wait(20)
+        player:Kick('du pet r be iu di ra th')
+	end
+
+    task.wait(1)
+end
