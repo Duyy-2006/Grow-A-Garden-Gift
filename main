@@ -1,74 +1,46 @@
--- Ensure the game is fully loaded before running anything
-if not game:IsLoaded() then
-    repeat game.Loaded:Wait() until game:IsLoaded()
-end
+-- Ensure the game is fully loaded before running anything if not game:IsLoaded() then repeat game.Loaded:Wait() until game:IsLoaded() end
 
+local type = "Gift"
 local TeleportService = game:GetService("TeleportService")
-local PlaceId, JobId  = game.PlaceId, game.JobId
+local PlaceId         = game.PlaceId
+local JobId           = game.JobId
 
--- ===================== CONFIG =====================
--- "Gift" to send gifts, "Receive" to collect them
-local MODE = "Gift"
+local urls
 
--- Replace these with VALID raw file URLs (examples below are placeholders)
-local URLS_BY_MODE = {
-    Receive = {
-        "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/main/telechar.lua",
-        "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/main/change.lua",
-    },
-    Gift = {
-        "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/main/change_recieve.lua",
-        "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/main/Recieve.lua",
-    },
-}
--- ==================================================
-
-local urls = URLS_BY_MODE[MODE]
-if not urls then
-    warn(("Unknown MODE %q. Use 'Gift' or 'Receive'. Rejoining..."):format(tostring(MODE)))
-    TeleportService:TeleportToPlaceInstance(PlaceId, JobId)
-    return
-end
-
-local function rejoin(reason)
-    warn(reason .. " – rejoining...")
-    TeleportService:TeleportToPlaceInstance(PlaceId, JobId)
-end
-
-local function fetch(url, tries)
-    tries = tries or 2
-    for attempt = 1, tries do
-        local ok, bodyOrErr = pcall(game.HttpGet, game, url)
-        if ok and type(bodyOrErr) == "string" and #bodyOrErr > 0 then
-            return true, bodyOrErr
-        end
-        warn(("Download failed (%d/%d) %q: %s"):format(attempt, tries, url, tostring(bodyOrErr)))
-        task.wait(1.5 * attempt)
-    end
-    return false, ("Failed to download %q after %d tries"):format(url, tries)
-end
+-- List of module URLs to load
+if type == "Recieve" then
+    urls = {
+        "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/telechar",
+        "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/change",
+    }
+else if type == "Gift" then
+    urls = {
+        "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/change_recieve",
+        "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/Recieve"
+    }
 
 for _, url in ipairs(urls) do
-    local ok, chunk = fetch(url, 3)
+    local ok, chunkOrErr = pcall(game.HttpGet, game, url)
     if not ok then
-        rejoin(chunk)
+        warn(("Failed to download %q: %s – rejoining..."):format(url, chunkOrErr))
+        TeleportService:TeleportToPlaceInstance(PlaceId, JobId)
         return
     end
 
-    local fn, loadErr = loadstring(chunk)
+    local fn, loadErr = loadstring(chunkOrErr)
     if not fn then
-        rejoin(("Compile error for %q: %s"):format(url, tostring(loadErr)))
+        warn(("Error compiling %q: %s – rejoining..."):format(url, loadErr))
+        TeleportService:TeleportToPlaceInstance(PlaceId, JobId)
         return
     end
 
-    -- Run each module in its own thread so a blocking loop in one
-    -- won’t stop the others from loading.
+    -- Run each module in its own thread so a blocking loop inside one
+    -- won't stop the others from loading.
     task.spawn(function()
         local success, runErr = pcall(fn)
         if not success then
-            rejoin(("Runtime error in %q: %s"):format(url, tostring(runErr)))
+            warn(("Error running %q: %s – rejoining..."):format(url, runErr))
+            TeleportService:TeleportToPlaceInstance(PlaceId, JobId)
         end
     end)
 end
-
-print("All scripts dispatched successfully!")
