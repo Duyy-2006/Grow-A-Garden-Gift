@@ -94,6 +94,7 @@ function TAFSERVICE.d()
             fireproximityprompt(TargetPlayer.Character.Head:FindFirstChildOfClass("ProximityPrompt"))
             end)
 			return true
+        end
     end
 end
 
