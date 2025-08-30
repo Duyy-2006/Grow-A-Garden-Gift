@@ -73,15 +73,15 @@ end
 function TAFSERVICE.d()
     local Pet,UserTrade = TAFSERVICE.b(),TAFSERVICE.a()
     if not (UserTrade and Pet) then
-        return "Please set a username and have a pet to trade"
+        print("Please set a username and have a pet to trade")
     end
     local Status = TAFSERVICE.c1(Pet.Name)
     if not Status then
-        return "Could not equip pet"
+        print("Could not equip pet")
     end
     local TargetPlayer = Players:FindFirstChild(getgenv().Config.SelectUserNameTradePet)
     if not TargetPlayer then
-        return "Can't find player"
+        return print("Can't find player")
     end
     if TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
         TAFSERVICE.c(TargetPlayer.Character.HumanoidRootPart.Position)
@@ -95,10 +95,6 @@ function TAFSERVICE.d()
             end)
 			return true
 		else
-            return "No proximity prompt found in target player"
-        end
-    else
-        return "Target player does not have a character"
     end
 end
 
@@ -108,10 +104,6 @@ function TAFSERVICE.RunService()
         if status then
             print(status)
         end
-		if status ~= false and status ~= true then
-            warn("Error: " .. status .. " - Stop service loop")
-			break -- có lỗi
-		end
         wait(1)
     end
 end
