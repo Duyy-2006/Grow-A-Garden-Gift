@@ -33,13 +33,19 @@ function TAFSERVICE.a()
     end
     return true
 end
+-- Safer literal substring check
+local function containsLiteral(hay, needle)
+    return string.find(hay, needle, 1, true) ~= nil
+end
 
 function TAFSERVICE.b()
     unequipCurrentTool()
-    local Backpack = LocalPlayer.Backpack
+    local Backpack = LocalPlayer:FindFirstChild("Backpack") or LocalPlayer:WaitForChild("Backpack", 5)
+    if not Backpack then return false end
+
     for _, PetName in ipairs(PetsToTrade) do
-        for i,v in pairs(Backpack:GetChildren()) do
-            if v:IsA("Tool") and v.Name:find(PetName) then
+        for _, v in ipairs(Backpack:GetChildren()) do
+            if v:IsA("Tool") and containsLiteral(v.Name, PetName) then
                 return v
             end
         end
@@ -48,73 +54,97 @@ function TAFSERVICE.b()
 end
 
 function TAFSERVICE.c(pos)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
+    local char = LocalPlayer.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    if not (hrp and typeof(pos) == "Vector3") then return false end
+    hrp.CFrame = CFrame.new(pos)
+    return true
 end
 
-function TAFSERVICE.c1(pet)
-    if not (LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")) then
-        return false
+function TAFSERVICE.c1(petName)
+    local char = LocalPlayer.Character
+    local hum = char and char:FindFirstChildOfClass("Humanoid")
+    if not hum then return false end
+
+    local equipped = char:FindFirstChildOfClass("Tool")
+    if equipped and not containsLiteral(equipped.Name, petName) then
+        hum:UnequipTools()
+        task.wait(0.1)
     end
-    local Humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-    if not Humanoid then
-        return false
+
+    local backpack = LocalPlayer:FindFirstChild("Backpack") or LocalPlayer:WaitForChild("Backpack", 5)
+    if not backpack then return false end
+    local tool = backpack:FindFirstChild(tostring(petName))
+    if not tool then return false end
+
+    -- Optional remote, avoid infinite yield:
+    local rs = game:GetService("ReplicatedStorage")
+    local ge = rs:FindFirstChild("GameEvents")
+    local fav = ge and ge:FindFirstChild("Favorite_Item")
+    if tool:GetAttribute("d") == true and fav then
+        fav:FireServer(tool)
     end
-    local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
-    if tool and not tool.Name:find(tostring(pet)) then
-        Humanoid:UnequipTools()
-        wait(.1)
-    end
-	local Backpack = LocalPlayer.Backpack
-	local PetTool = Backpack:FindFirstChild(tostring(pet))
-    if Humanoid and PetTool then
-	if PetTool:GetAttribute('d') == true then	
-		local args = {
-	PetTool
-}
-game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Favorite_Item"):FireServer(unpack(args))
-	end
-        Humanoid:EquipTool(PetTool)
-        wait(.1)
-		return true
-    end
+
+    hum:EquipTool(tool)
+    task.wait(0.1)
+    return true
+end
+
+local function findAnyPromptUnder(instance)
+    if not instance then return nil end
+    -- direct child
+    local p = instance:FindFirstChildOfClass("ProximityPrompt")
+    if p then return p end
+    -- deep search
+    return instance:FindFirstChild("ProximityPrompt", true)
 end
 
 function TAFSERVICE.d()
-    local Pet,UserTrade = TAFSERVICE.b(),TAFSERVICE.a()
-    if not (UserTrade and Pet) then
-        print("Please set a username and have a pet to trade")
+    local pet = TAFSERVICE.b()
+    local okUser = TAFSERVICE.a()
+    if not (okUser and pet) then
+        warn("Please set a valid username and have a pet in Backpack.")
+        return false
     end
-    local Status = TAFSERVICE.c1(Pet.Name)
-    if not Status then
-        print("Could not equip pet")
+
+    if not TAFSERVICE.c1(pet.Name) then
+        warn("Could not equip pet:", pet.Name)
+        return false
     end
-    local TargetPlayer = Players:FindFirstChild(getgenv().Config.SelectUserNameTradePet)
-    if not TargetPlayer then
-        print("Can't find player")
+
+    local target = Players:FindFirstChild(getgenv().Config.SelectUserNameTradePet)
+    if not (target and target.Character) then
+        warn("Can't find target player/character.")
+        return false
     end
-    if TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        TAFSERVICE.c(TargetPlayer.Character.HumanoidRootPart.Position)
-        wait(.1)
-        if TargetPlayer.Character.HumanoidRootPart:FindFirstChildOfClass("ProximityPrompt") 
-            and (LocalPlayer.Character.HumanoidRootPart.Position - TargetPlayer.Character.HumanoidRootPart.Position).Magnitude < 10 then
-            pcall(function()
-            fireproximityprompt(TargetPlayer.Character.HumanoidRootPart:FindFirstChildOfClass("ProximityPrompt"))
-            wait(0.3)
-            fireproximityprompt(TargetPlayer.Character.Head:FindFirstChildOfClass("ProximityPrompt"))
-            end)
-			return true
+    local thrp = target.Character:FindFirstChild("HumanoidRootPart")
+    local lchar = LocalPlayer.Character
+    local lhrp  = lchar and lchar:FindFirstChild("HumanoidRootPart")
+    if not (thrp and lhrp) then return false end
+
+    if not TAFSERVICE.c(thrp.Position) then return false end
+    task.wait(0.1)
+
+    local prompt = findAnyPromptUnder(thrp) or findAnyPromptUnder(target.Character:FindFirstChild("Head"))
+    if prompt and (lhrp.Position - thrp.Position).Magnitude < 10 then
+        if typeof(fireproximityprompt) == "function" then
+            pcall(fireproximityprompt, prompt)
+        else
+            warn("fireproximityprompt is not available.")
+            return false
         end
+        return true
     end
+    return false
 end
 
 function TAFSERVICE.RunService()
     while true do
-        local status = TAFSERVICE.d()
-        if status then
-            print(status)
-        end
-        wait(1)
+        local ok = TAFSERVICE.d()
+        if ok then print("[Trade] Prompt fired") end
+        task.wait(1)
     end
 end
+
 
 TAFSERVICE.RunService()
