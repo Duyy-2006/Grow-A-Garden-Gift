@@ -15,7 +15,7 @@ local LocalPlayer = Players.LocalPlayer
 local TAFSERVICE = {}
 
 local function unequipCurrentTool()
-    local char = plr.Character or plr.CharacterAdded:Wait()
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local hum = char:FindFirstChildOfClass("Humanoid")
     if hum then
         hum:UnequipTools()  -- moves equipped tool back to Backpack
