@@ -53,7 +53,7 @@ function TAFSERVICE.c1(pet)
     local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
     if tool and not tool.Name:find(tostring(pet)) then
         Humanoid:UnequipTools()
-        wait(0.1)
+        wait(.1)
     end
 	local Backpack = LocalPlayer.Backpack
 	local PetTool = Backpack:FindFirstChild(tostring(pet))
@@ -65,7 +65,7 @@ function TAFSERVICE.c1(pet)
 game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Favorite_Item"):FireServer(unpack(args))
 	end
         Humanoid:EquipTool(PetTool)
-        wait(0.1)
+        wait(.1)
 		return true
     end
 end
@@ -85,7 +85,7 @@ function TAFSERVICE.d()
     end
     if TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
         TAFSERVICE.c(TargetPlayer.Character.HumanoidRootPart.Position)
-        wait(0.3)
+        wait(.1)
         if TargetPlayer.Character.HumanoidRootPart:FindFirstChildOfClass("ProximityPrompt") 
             and (LocalPlayer.Character.HumanoidRootPart.Position - TargetPlayer.Character.HumanoidRootPart.Position).Magnitude < 10 then
             pcall(function()
@@ -112,7 +112,7 @@ function TAFSERVICE.RunService()
             warn("Error: " .. status .. " - Stop service loop")
 			break -- có lỗi
 		end
-        wait(1)
+        wait(.1)
     end
 end
 
