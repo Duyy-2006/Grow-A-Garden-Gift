@@ -81,7 +81,7 @@ function TAFSERVICE.d()
     end
     local TargetPlayer = Players:FindFirstChild(getgenv().Config.SelectUserNameTradePet)
     if not TargetPlayer then
-        return print("Can't find player")
+        print("Can't find player")
     end
     if TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
         TAFSERVICE.c(TargetPlayer.Character.HumanoidRootPart.Position)
