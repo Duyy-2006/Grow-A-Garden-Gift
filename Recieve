@@ -14,6 +14,14 @@ local LocalPlayer = Players.LocalPlayer
 
 local TAFSERVICE = {}
 
+local function unequipCurrentTool()
+    local char = plr.Character or plr.CharacterAdded:Wait()
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        hum:UnequipTools()  -- moves equipped tool back to Backpack
+    end
+end
+
 function TAFSERVICE.a()
     local UserName = getgenv().Config.SelectUserNameTradePet
     if UserName == "" then
@@ -27,6 +35,7 @@ function TAFSERVICE.a()
 end
 
 function TAFSERVICE.b()
+    unequipCurrentTool()
     local Backpack = LocalPlayer.Backpack
     for _, PetName in ipairs(PetsToTrade) do
         for i,v in pairs(Backpack:GetChildren()) do
