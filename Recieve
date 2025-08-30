@@ -112,7 +112,7 @@ function TAFSERVICE.RunService()
             warn("Error: " .. status .. " - Stop service loop")
 			break -- có lỗi
 		end
-        wait(.1)
+        wait(1)
     end
 end
 
