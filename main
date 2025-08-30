@@ -26,14 +26,12 @@ for _, url in ipairs(urls) do
     local ok, chunkOrErr = pcall(game.HttpGet, game, url)
     if not ok then
         warn(("Failed to download %q: %s – rejoining..."):format(url, chunkOrErr))
-        TeleportService:TeleportToPlaceInstance(PlaceId, JobId)
         return
     end
 
     local fn, loadErr = loadstring(chunkOrErr)
     if not fn then
         warn(("Error compiling %q: %s – rejoining..."):format(url, loadErr))
-        TeleportService:TeleportToPlaceInstance(PlaceId, JobId)
         return
     end
 
@@ -43,7 +41,6 @@ for _, url in ipairs(urls) do
         local success, runErr = pcall(fn)
         if not success then
             warn(("Error running %q: %s – rejoining..."):format(url, runErr))
-            TeleportService:TeleportToPlaceInstance(PlaceId, JobId)
         end
     end)
 end
