@@ -1,32 +1,49 @@
 -- LocalScript in StarterPlayerScripts
 print("OKAY")
 local TreeTable = {
-"Golden Goose",
+    "Golden Goose",
 }
 
 local Players     = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local player = Players.LocalPlayer
-local filename = player.Name .. '.txt'
--- wait until Backpack is available
+local player      = Players.LocalPlayer
+local filename    = player.Name .. ".txt"
+
 repeat task.wait() until LocalPlayer and LocalPlayer:FindFirstChild("Backpack")
 
 while true do
     local matchCount = 0
+
+    -- Count tools in Backpack
     for _, tool in ipairs(LocalPlayer.Backpack:GetChildren()) do
-        -- check every name in TreeTable
-        for _, treeName in ipairs(TreeTable) do
-            if tool.Name:find(treeName) then
-                matchCount = matchCount + 1
-                break    -- stop checking this tool once matched
+        if tool:IsA("Tool") then
+            for _, treeName in ipairs(TreeTable) do
+                if string.find(tool.Name, treeName, 1, true) then
+                    matchCount = matchCount + 1
+                    break -- stop checking this tool once matched
+                end
             end
         end
     end
 
+    -- Count currently equipped tools (parented to Character)
+    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    for _, tool in ipairs(character:GetChildren()) do
+        if tool:IsA("Tool") then
+            for _, treeName in ipairs(TreeTable) do
+                if string.find(tool.Name, treeName, 1, true) then
+                    matchCount = matchCount + 1
+                    break -- stop checking this tool once matched
+                end
+            end
+        end
+    end
+
+    print(matchCount)
     if matchCount > 0 then
-		writefile(filename, 'Yummytool')
-        player:Kick('du pet r be iu di ra th')
-	end
+        writefile(filename, "Yummytool")
+        player:Kick("du pet r be iu di ra th")
+    end
 
     task.wait(.1)
 end
