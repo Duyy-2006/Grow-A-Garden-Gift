@@ -1,7 +1,7 @@
 -- LocalScript in StarterPlayerScripts
 print("OKAY")
 local TreeTable = {
-  "Griffin", "Golden Goose", "Red Fox",
+"Golden Goose",
 }
 
 local Players     = game:GetService("Players")
