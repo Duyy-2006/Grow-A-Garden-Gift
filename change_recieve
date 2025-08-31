@@ -8,13 +8,21 @@ local Players     = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local player = Players.LocalPlayer
 local filename = player.Name .. '.txt'
--- wait until Backpack is available
+
+local function unequipCurrentTool()
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        hum:UnequipTools()  -- moves equipped tool back to Backpack
+    end
+end
+
 repeat task.wait() until LocalPlayer and LocalPlayer:FindFirstChild("Backpack")
 
 while true do
     local matchCount = 0
     for _, tool in ipairs(LocalPlayer.Backpack:GetChildren()) do
-        -- check every name in TreeTable
+        unequipCurrentTool()
         for _, treeName in ipairs(TreeTable) do
             if tool.Name:find(treeName) then
                 matchCount = matchCount + 1
