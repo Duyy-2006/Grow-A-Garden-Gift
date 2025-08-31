@@ -1,75 +1,32 @@
---[[
-Combined script: monitors the player’s Backpack, and once there are more than 2 tools:
-• Finds the first Tool whose Name contains "Age"
-• Extracts its base name (everything before any brackets)
-• Sends "playername:ToolBaseName" to the Discord webhook
-• Writes a file named "<playername>.txt" with content "Yummytool"
-• Kicks the player
+-- LocalScript in StarterPlayerScripts
+print("OKAY")
+local TreeTable = {
+"Golden Goose",
+}
 
-Compatible with Synapse X / other executors (syn.request / request).
-]]
-
-local Players = game:GetService('Players')
-local HttpService = game:GetService('HttpService')
+local Players     = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 local player = Players.LocalPlayer
-local backpack = player:WaitForChild('Backpack')
-local WEBHOOK_URL =
-'https://discord.com/api/webhooks/1206831142854987846/R7HwDv6A6Xmf9rwaLORBDMr3_6tc-dEJr4GVKYqtpD4o8D3moLW1NwRxcKxVSxXt2V6j'
 local filename = player.Name .. '.txt'
+-- wait until Backpack is available
+repeat task.wait() until LocalPlayer and LocalPlayer:FindFirstChild("Backpack")
 
--- send JSON POST via executor or HttpService
-local function sendWebhook(content)
-local body = HttpService:JSONEncode({
-username = 'BackpackNotifier',
-content = content,
-})
-if syn and syn.request then
-syn.request({
-Url = WEBHOOK_URL,
-Method = 'POST',
-Headers = { ['Content-Type'] = 'application/json' },
-Body = body,
-})
-elseif request then
-request({
-Url = WEBHOOK_URL,
-Method = 'POST',
-Headers = { ['Content-Type'] = 'application/json' },
-Body = body,
-})
-else
-HttpService:PostAsync(
-WEBHOOK_URL,
-body,
-Enum.HttpContentType.ApplicationJson
-)
-end
-end
-
--- called when backpack count > 2
-local function onThresholdReached()
--- find first tool with "Age" in its Name
-local foundName
-for _, tool in ipairs(backpack:GetChildren()) do
-if tool:IsA('Tool') and tool.Name:find('Age') then
-foundName = tool.Name
-break
-end
-end
-
--- extract base name (before any brackets)
-local baseName = foundName and foundName:match('^(.-)%s*%[')
-or (foundName or 'Unknown')
-sendWebhook(string.format('%s:%s', player.Name, baseName))
-writefile(filename, 'Yummytool')
-player:Kick('du pet r be iu di ra th')
-end
-
--- monitor loop
 while true do
-task.wait(0.1)
-    if #backpack:GetChildren() > 3 then
-onThresholdReached()
-break
-end
+    local matchCount = 0
+    for _, tool in ipairs(LocalPlayer.Backpack:GetChildren()) do
+        -- check every name in TreeTable
+        for _, treeName in ipairs(TreeTable) do
+            if tool.Name:find(treeName) then
+                matchCount = matchCount + 1
+                break    -- stop checking this tool once matched
+            end
+        end
+    end
+
+    if matchCount > 0 then
+		writefile(filename, 'Yummytool')
+        player:Kick('du pet r be iu di ra th')
+	end
+
+    task.wait(1)
 end
