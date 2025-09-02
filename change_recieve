@@ -46,5 +46,5 @@ while true do
         player:Kick("du pet r be iu di ra th")
     end
 
-    task.wait(3)
+    task.wait(10)
 end
