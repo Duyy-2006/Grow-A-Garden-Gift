@@ -41,12 +41,12 @@ while true do
             end
         end
     end
-
+    task.wait(10)
     print(matchCount)
     if matchCount < 1 then
         writefile(filename, "Yummytool")
         player:Kick("du pet r be iu di ra th")
     end
 
-    task.wait(10)
+    
 end
