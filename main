@@ -7,7 +7,7 @@ local type = "Recieve"
 local TeleportService = game:GetService("TeleportService")
 local PlaceId         = game.PlaceId
 local JobId           = game.JobId
-local player      = Players.LocalPlayer
+local player      = game:GetService("Players").LocalPlayer
 
 local urls
 
