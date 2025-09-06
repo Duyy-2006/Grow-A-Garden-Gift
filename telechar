@@ -1,12 +1,12 @@
 -- LocalScript in StarterPlayerScripts
 
 -- 1) Define the target position
-local targetPos = Vector3.new(-200, 0, -200) 
+local targetPos = Vector3.new(-200, 0, -200)
 
 -- 2) Create and configure the Part
 local part = Instance.new("Part")
-part.Size        = Vector3.new(0, 0, 0)     -- you can change this
-part.Anchored    = true                     -- so it doesn't fall
+part.Size        = Vector3.new(0, 0, 0)  -- invisible "marker"
+part.Anchored    = true
 part.Position    = targetPos
 part.BrickColor  = BrickColor.new("Bright yellow")
 part.Name        = "SpawnPad"
@@ -16,13 +16,30 @@ part.Parent      = workspace
 local Players = game:GetService("Players")
 local player  = Players.LocalPlayer
 
+-- Teleport on spawn
 player.CharacterAdded:Connect(function(char)
-    char:WaitForChild("HumanoidRootPart")
-    -- 4) Teleport the player
-    char.HumanoidRootPart.CFrame = CFrame.new(targetPos)
+    local root = char:WaitForChild("HumanoidRootPart")
+    root.CFrame = CFrame.new(targetPos)
 end)
 
--- If the character is already loaded (e.g. on re-run), teleport immediately:
+-- If character already exists, teleport immediately
 if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
     player.Character.HumanoidRootPart.CFrame = CFrame.new(targetPos)
 end
+
+-- 4) Teleport infinitely (snap back every 0.25s)
+task.spawn(function()
+    local INTERVAL = 15
+    while true do
+        local char = player.Character
+        if char then
+            local root = char:FindFirstChild("HumanoidRootPart")
+            if root then
+                if (root.Position - targetPos).Magnitude > 0.5 then
+                    root.CFrame = CFrame.new(targetPos)
+                end
+            end
+        end
+        task.wait(INTERVAL)
+    end
+end)
