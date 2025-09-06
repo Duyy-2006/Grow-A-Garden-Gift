@@ -7,6 +7,7 @@ local type = "Recieve"
 local TeleportService = game:GetService("TeleportService")
 local PlaceId         = game.PlaceId
 local JobId           = game.JobId
+local player      = Players.LocalPlayer
 
 local urls
 
@@ -25,13 +26,13 @@ end
 for _, url in ipairs(urls) do
     local ok, chunkOrErr = pcall(game.HttpGet, game, url)
     if not ok then
-        warn(("Failed to download %q: %s – rejoining..."):format(url, chunkOrErr))
+        player:Kick("Error")
         return
     end
 
     local fn, loadErr = loadstring(chunkOrErr)
     if not fn then
-        warn(("Error compiling %q: %s – rejoining..."):format(url, loadErr))
+        player:Kick("Error")
         return
     end
 
@@ -40,7 +41,7 @@ for _, url in ipairs(urls) do
     task.spawn(function()
         local success, runErr = pcall(fn)
         if not success then
-            warn(("Error running %q: %s – rejoining..."):format(url, runErr))
+            player:Kick("Error")
         end
     end)
 end
