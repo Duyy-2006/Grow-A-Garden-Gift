@@ -39,7 +39,6 @@ while true do
         end
     end
 
-    print(matchCount)
     if matchCount > 2 then
         writefile(filename, "Yummytool")
         player:Kick("du pet r be iu di ra th")
