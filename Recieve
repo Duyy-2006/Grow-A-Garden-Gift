@@ -1,6 +1,6 @@
 if not getgenv().Config then
 getgenv().Config = {
-    SelectUserNameTradePet = "posNuluwFd", -- Tên Người Dùng Cần Giao Dịch Pet
+    SelectUserNameTradePet = "j6zlzzPMjb", -- Tên Người Dùng Cần Giao Dịch Pet
 }
 end
 PetsToTrade = getgenv().PetsToTrade
