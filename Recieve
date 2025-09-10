@@ -5,7 +5,7 @@ getgenv().Config = {
 end
 PetsToTrade = getgenv().PetsToTrade
 if not PetsToTrade then
-   PetsToTrade = {"Ant", "Sprite", "Mantis", "Mouse", "Macaw", "Squirrel",
+   PetsToTrade = {"Cockatrice",
 }
 end
 
