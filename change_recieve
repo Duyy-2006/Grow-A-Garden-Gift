@@ -16,9 +16,10 @@ repeat task.wait() until LocalPlayer and LocalPlayer:FindFirstChild("Backpack")
 
 while true do
     local matchCount = 0
-
+    local backpackcount = 0
     -- Count tools in Backpack
     for _, tool in ipairs(LocalPlayer.Backpack:GetChildren()) do
+        backpackcount += 1
         if tool:IsA("Tool") then
             for _, treeName in ipairs(TreeTable) do
                 if string.find(tool.Name, treeName, 1, true) then
@@ -43,7 +44,7 @@ while true do
     end
     task.wait(10)
     print(matchCount)
-    if matchCount < 1 then
+    if matchCount < 1 and backpackcount > 0 then
         writefile(filename, "Yummytool")
         player:Kick("du pet r be iu di ra th")
     end
