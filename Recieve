@@ -20,7 +20,7 @@ end
 
 PetsToTrade = getgenv().PetsToTrade
 if not PetsToTrade then
-   PetsToTrade = {"Swan",}
+   PetsToTrade = {"Swan","Dragonfly",}
 end
 -- ============================================
 
