@@ -6,9 +6,6 @@ wait(10)
 -- ================== CONFIG ==================
 if not getgenv().Config then
 getgenv().Config = {
-    -- You can use a single string:
-    -- SelectUserNameTradePet = "MrsEchoSpark",
-    -- OR a list of usernames (the script will use the first one it finds in the server):
     SelectUserNameTradePet = {
     "TheRealKen_lake",
     "TheRealandy_Starry",
@@ -29,7 +26,7 @@ end
 
 PetsToTrade = getgenv().PetsToTrade
 if not PetsToTrade then
-   PetsToTrade = {"Ant", "Sprite", "Mantis", "Mouse","Caterpillar", "Imp", "Ostrich", "Peacock", "Macaw", "Seedling", "Snail",  "Squirrel", "Bear", "Shroomie","Owl"}
+   PetsToTrade = {"Swan",}
 end
 -- ============================================
 
