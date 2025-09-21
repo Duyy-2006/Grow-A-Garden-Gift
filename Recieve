@@ -25,7 +25,7 @@ end
 
 PetsToTrade = getgenv().PetsToTrade
 if not PetsToTrade then
-   PetsToTrade = {"Dragonfly",}
+   PetsToTrade = {"Cockatrice", "French","Golden Goose", "Lobster", "Red Fox","Dragonfly","Swan","Phoenix",}
 end
 -- ============================================
 
