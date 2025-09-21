@@ -17,6 +17,7 @@ if type == "Recieve" then
     }
 elseif type == "Gift" then
     urls = {
+        "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/change_recieve"
         "https://raw.githubusercontent.com/Duyy-2006/Grow-A-Garden-Gift/refs/heads/main/Recieve"
     }
 end
