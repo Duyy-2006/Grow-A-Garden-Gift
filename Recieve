@@ -7,11 +7,16 @@ wait(10)
 if not getgenv().Config then
 getgenv().Config = {
     SelectUserNameTradePet = {
-    "LegendelmGobble2004",
-    "ZephyrPulse32",
-    "Th3R3alV3raChaos",
-    "zoe_Loom63",
-    "VINCE_gleam2020"
+    "NexusBella_whirl",
+    "MrsleoVortex2017",
+    "Roseridge56",
+    "brook_Paladin76",
+    "Th3R3alIanX3r014",
+    "AlphaZigzag",
+    "VeraflakeZigzag2017",
+    "jumpyvaporSky",
+    "fizzle_Alpha",
+    "JacksonYonder2002"
 }
 
 
