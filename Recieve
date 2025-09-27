@@ -7,11 +7,40 @@ wait(10)
 if not getgenv().Config then
 getgenv().Config = {
     SelectUserNameTradePet = {
-    "MrsAndrewkn0ll2005",
-    "Emmajolt2012",
-    "MrsGamerKnack2006",
-    "NexusJill_Dancer"
+    "DanielHeroDew82",
+    "TheRealEzra_vale",
+    "KnackYond3r",
+    "MrsTinaWolf202411",
+    "TheRealruth_Hearth20",
+    "NexusfredCode",
+    "Cooki3Catalyst80",
+    "ItsThomasglint52",
+    "TheRealJosephVectorB",
+    "LillianCrimsonAc3",
+    "AidenMagicRadiance",
+    "MrsNatali3Build3r",
+    "MrsGeorge_Loom59",
+    "Th3R3alhugh_Bolt",
+    "ItsJacksonashSonic",
+    "AnnaOnyxEagle",
+    "ItsC0nn0rDynam02019",
+    "Tig3r_fizzl3",
+    "ItspinePixelatedZeph",
+    "taraGlitchbr00k",
+    "ivywhisper90",
+    "ItsSarahKing2022",
+    "ItsClaireCyberTurbo",
+    "N3xusMik3swirlSp3ct3",
+    "nateBuilder2018",
+    "ItsPeytonTitan",
+    "DawnSparklynook",
+    "TheRealGlowjolt53",
+    "JoltTalon",
+    "ItsZayd3nBlaz3",
+    "TheRealJuliandazzlep",
+    "Th3R3alGrac3Pix3l201"
 }
+
 }
 end
 
